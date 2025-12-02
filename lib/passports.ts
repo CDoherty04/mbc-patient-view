@@ -1,4 +1,32 @@
 import { ethers } from 'ethers';
+import Constants from 'expo-constants';
+
+// Helper function to get environment variable
+// Works in both Expo (via expo-constants) and web/Node.js (via process.env)
+// Environment variables are loaded by app.config.js and exposed via expo-constants
+function getEnvVar(key: string): string | undefined {
+	// First, try expo-constants (works for both native and web builds)
+	// Environment variables are exposed via app.config.js -> extra
+	if (Constants.expoConfig?.extra?.[key]) {
+		return Constants.expoConfig.extra[key];
+	}
+
+	// Fallback to process.env (for web builds where process.env might be set at build time)
+	if (typeof process !== 'undefined' && process.env) {
+		// Try direct key first
+		if (process.env[key]) {
+			return process.env[key];
+		}
+		// Try EXPO_PUBLIC_ prefixed version (Expo convention for public env vars)
+		// Note: Not recommended for private keys, but included for completeness
+		const expoPublicKey = `EXPO_PUBLIC_${key}`;
+		if (process.env[expoPublicKey]) {
+			return process.env[expoPublicKey];
+		}
+	}
+
+	return undefined;
+}
 
 // Contract configuration
 const CONTRACT_ADDRESS = '0xb8Df87631dBB64D28a4c015b23540F1ce02445e2';
@@ -216,11 +244,14 @@ let wallet: ethers.Wallet | null = null;
 export function initializeBlockchain(config: BlockchainConfig = {}): void {
 	try {
 		// Load RPC URL from config, environment variable, or use default
-		const rpcUrl = config.rpcUrl || process.env.RPC_URL;
+		const rpcUrl = "https://sepolia.base.org";
+		if (!rpcUrl) {
+			throw new Error('RPC_URL is required. Please provide it in the config or set RPC_URL environment variable.');
+		}
 		provider = new ethers.JsonRpcProvider(rpcUrl);
 
 		// Load private key from config or environment variable
-		const privateKeyValue = config.privateKey || process.env.PRIVATE_KEY;
+		const privateKeyValue = config.privateKey || getEnvVar('PRIVATE_KEY');
 		if (!privateKeyValue) {
 			throw new Error('PRIVATE_KEY is required. Please provide it in the config or set PRIVATE_KEY environment variable.');
 		}

@@ -1,11 +1,14 @@
 import { Image } from 'expo-image';
 import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const handlePay = () => {
     // TODO: Implement pay functionality
     alert('Pay functionality coming soon');
@@ -24,6 +27,10 @@ export default function HomeScreen() {
   const handleGeneralInfo = () => {
     // TODO: Implement general website info functionality
     alert('General website info coming soon');
+  };
+
+  const handleMintPassport = () => {
+    router.push('/(tabs)/mint-passport');
   };
 
   return (
@@ -57,6 +64,12 @@ export default function HomeScreen() {
             <TouchableOpacity style={styles.actionButton} onPress={handleGeneralInfo}>
               <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
                 General Website Info
+              </ThemedText>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton} onPress={handleMintPassport}>
+              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
+                Mint Medical Passport
               </ThemedText>
             </TouchableOpacity>
           </ThemedView>
