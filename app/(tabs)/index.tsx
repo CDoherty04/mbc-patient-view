@@ -1,98 +1,140 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const handlePay = () => {
+    // TODO: Implement pay functionality
+    alert('Pay functionality coming soon');
+  };
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
+  const handleViewPrescriptions = () => {
+    // TODO: Implement view prescriptions functionality
+    alert('View prescriptions functionality coming soon');
+  };
+
+  const handleSelectPharmacy = () => {
+    // TODO: Implement select pharmacy functionality
+    alert('Select pharmacy functionality coming soon');
+  };
+
+  const handleGeneralInfo = () => {
+    // TODO: Implement general website info functionality
+    alert('General website info coming soon');
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ThemedView style={styles.container}>
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Main Action Section */}
+          <ThemedView style={styles.actionSection}>
+            <TouchableOpacity style={styles.actionButton} onPress={handlePay}>
+              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
+                Pay
+              </ThemedText>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton} onPress={handleViewPrescriptions}>
+              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
+                View Prescriptions
+              </ThemedText>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton} onPress={handleSelectPharmacy}>
+              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
+                Select Pharmacy
+              </ThemedText>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton} onPress={handleGeneralInfo}>
+              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
+                General Website Info
+              </ThemedText>
+            </TouchableOpacity>
+          </ThemedView>
+
+          {/* Patient Info Section */}
+          <ThemedView style={styles.patientSection}>
+            <Image
+              source={require('@/assets/images/Patient.png')}
+              style={styles.patientImage}
+              contentFit="cover"
+            />
+            <ThemedView style={styles.patientInfo} lightColor="transparent" darkColor="transparent">
+              <ThemedText type="defaultSemiBold" style={styles.patientName}>
+                Charlie Doherty
+              </ThemedText>
+              <ThemedText type="default" style={styles.patientRole}>
+                CompanyRX Patient
+              </ThemedText>
+            </ThemedView>
+          </ThemedView>
+        </ScrollView>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  safeArea: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: 20,
+    paddingTop: 20,
+    gap: 32,
+    paddingBottom: 40,
+  },
+  actionSection: {
+    gap: 16,
+  },
+  actionButton: {
+    backgroundColor: '#00ff88',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 56,
+  },
+  actionButtonText: {
+    color: '#000',
+    fontSize: 16,
+  },
+  patientSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 16,
+    padding: 0,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  patientImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  patientInfo: {
+    flex: 1,
+    gap: 4,
+  },
+  patientName: {
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  patientRole: {
+    fontSize: 14,
+    opacity: 0.7,
   },
 });
