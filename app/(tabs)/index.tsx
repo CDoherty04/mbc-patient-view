@@ -18,13 +18,7 @@ export default function HomeScreen() {
   };
 
   const handleSelectPharmacy = () => {
-    // TODO: Implement select pharmacy functionality
-    alert('Select pharmacy functionality coming soon');
-  };
-
-  const handleGeneralInfo = () => {
-    // TODO: Implement general website info functionality
-    alert('General website info coming soon');
+    router.push('/(tabs)/pharmacies');
   };
 
   const handleMintPassport = () => {
@@ -56,12 +50,6 @@ export default function HomeScreen() {
             <TouchableOpacity style={styles.actionButton} onPress={handleSelectPharmacy}>
               <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
                 Select Pharmacy
-              </ThemedText>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleGeneralInfo}>
-              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
-                General Website Info
               </ThemedText>
             </TouchableOpacity>
             

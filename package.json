@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.5",
     "ethers": "^6.15.0",
     "expo": "~54.0.25",
@@ -38,8 +40,7 @@
     "react-native-screens": "~4.16.0",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.5.1",
-    "viem": "^2.40.4",
-    "axios": "^1.7.9"
+    "viem": "^2.40.4"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
