@@ -10,8 +10,7 @@ export default function HomeScreen() {
   const router = useRouter();
 
   const handlePay = () => {
-    // TODO: Implement pay functionality
-    alert('Pay functionality coming soon');
+    router.push('/(tabs)/payment-requests');
   };
 
   const handleViewPrescriptions = () => {

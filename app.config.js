@@ -6,6 +6,10 @@ const path = require('path');
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 dotenv.config(); // Also load .env as fallback
 
+if (!process.env.EXPO_ROUTER_APP_ROOT) {
+  process.env.EXPO_ROUTER_APP_ROOT = './app';
+}
+
 module.exports = {
   expo: {
     name: 'mbc-patient-view',
