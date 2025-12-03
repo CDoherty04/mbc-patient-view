@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
-import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -14,8 +14,7 @@ export default function HomeScreen() {
   };
 
   const handleViewPrescriptions = () => {
-    // TODO: Implement view prescriptions functionality
-    alert('View prescriptions functionality coming soon');
+    router.push('/(tabs)/prescriptions');
   };
 
   const handleSelectPharmacy = () => {
