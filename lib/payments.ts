@@ -119,51 +119,113 @@ export function storePaymentRequest(request: PaymentRequest): void {
 
 /**
  * Get all payment requests for a patient address
+ * Queries bills from pharmacyBills storage and filters by patient address
  */
 export function getPaymentRequests(patientAddress: string): PaymentRequest[] {
-  // Try to load from localStorage first (for web)
+  const requests: PaymentRequest[] = [];
+  
+  // Query bills from pharmacyBills storage (where pharmacist stores bills)
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const stored = localStorage.getItem('pharmacyBills');
+      if (stored) {
+        const bills = JSON.parse(stored) as any[];
+        
+        // Filter bills by patient address and convert to PaymentRequest format
+        const patientBills = bills.filter(
+          (bill) => bill.patientAddress && 
+                   bill.patientAddress.toLowerCase() === patientAddress.toLowerCase()
+        );
+        
+        // Convert bills to payment requests
+        for (const bill of patientBills) {
+          requests.push({
+            id: bill.id,
+            tokenId: bill.tokenId,
+            patientAddress: bill.patientAddress,
+            pharmacistAddress: bill.pharmacistAddress,
+            amount: bill.amount,
+            amountInSubunits: bill.amountInSubunits || String(bill.amount * 1_000_000),
+            status: bill.status === "Paid" ? "completed" as const : 
+                   bill.status === "Pending" ? "pending" as const : "pending" as const,
+            createdAt: bill.createdAt,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load payment requests from pharmacyBills:', error);
+    }
+  }
+  
+  // Also check legacy paymentRequests storage for backwards compatibility
   if (typeof window !== 'undefined' && window.localStorage) {
     try {
       const stored = localStorage.getItem('paymentRequests');
       if (stored) {
-        const requests = JSON.parse(stored) as PaymentRequest[];
-        paymentRequestsStorage = requests;
+        const legacyRequests = JSON.parse(stored) as PaymentRequest[];
+        const patientLegacyRequests = legacyRequests.filter(
+          (req) => req.patientAddress.toLowerCase() === patientAddress.toLowerCase()
+        );
+        // Merge with existing requests, avoiding duplicates
+        for (const legacyReq of patientLegacyRequests) {
+          if (!requests.find(r => r.id === legacyReq.id)) {
+            requests.push(legacyReq);
+          }
+        }
       }
     } catch (error) {
-      console.error('Failed to load payment requests from localStorage:', error);
+      console.error('Failed to load payment requests from legacy storage:', error);
     }
   }
   
-  return paymentRequestsStorage.filter(
-    (req) => req.patientAddress.toLowerCase() === patientAddress.toLowerCase()
-  );
+  return requests;
 }
 
 /**
  * Update payment request status
+ * Updates the status in pharmacyBills storage
  */
 export function updatePaymentRequestStatus(
   requestId: string,
   status: "pending" | "completed" | "failed"
 ): void {
-  const request = paymentRequestsStorage.find((r) => r.id === requestId);
-  if (request) {
-    request.status = status;
-    
-    // Update localStorage if available
-    if (typeof window !== 'undefined' && window.localStorage) {
-      try {
-        const stored = localStorage.getItem('paymentRequests');
-        if (stored) {
-          const requests = JSON.parse(stored) as PaymentRequest[];
-          const updated = requests.map((r) =>
-            r.id === requestId ? { ...r, status } : r
-          );
-          localStorage.setItem('paymentRequests', JSON.stringify(updated));
-        }
-      } catch (error) {
-        console.error('Failed to update payment request in localStorage:', error);
+  // Update in pharmacyBills storage (where bills are actually stored)
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const stored = localStorage.getItem('pharmacyBills');
+      if (stored) {
+        const bills = JSON.parse(stored) as any[];
+        const updated = bills.map((bill) => {
+          if (bill.id === requestId) {
+            return {
+              ...bill,
+              status: status === "completed" ? "Paid" as const : 
+                     status === "failed" ? "Pending" as const : 
+                     "Pending" as const,
+            };
+          }
+          return bill;
+        });
+        localStorage.setItem('pharmacyBills', JSON.stringify(updated));
       }
+    } catch (error) {
+      console.error('Failed to update payment request in pharmacyBills:', error);
+    }
+  }
+  
+  // Also update legacy paymentRequests storage for backwards compatibility
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const stored = localStorage.getItem('paymentRequests');
+      if (stored) {
+        const requests = JSON.parse(stored) as PaymentRequest[];
+        const updated = requests.map((r) =>
+          r.id === requestId ? { ...r, status } : r
+        );
+        localStorage.setItem('paymentRequests', JSON.stringify(updated));
+      }
+    } catch (error) {
+      console.error('Failed to update payment request in legacy storage:', error);
     }
   }
 }

@@ -8,9 +8,11 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { BackButton } from '@/components/back-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { usePharmacy } from '@/contexts/PharmacyContext';
@@ -156,8 +158,13 @@ export default function PharmaciesScreen() {
     return (
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.container}>
-          <ActivityIndicator size="large" color="#00ff88" />
-          <ThemedText style={styles.loadingText}>Loading pharmacies...</ThemedText>
+          <View style={styles.header}>
+            <BackButton />
+          </View>
+          <View style={styles.centerContent}>
+            <ActivityIndicator size="large" color="#4A90E2" />
+            <ThemedText style={styles.loadingText}>Loading pharmacies...</ThemedText>
+          </View>
         </ThemedView>
       </SafeAreaView>
     );
@@ -166,20 +173,20 @@ export default function PharmaciesScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ThemedView style={styles.container}>
-        <ThemedView style={styles.header}>
-          <ThemedText type="title" style={styles.title}>
-            My Pharmacies
-          </ThemedText>
-          <TouchableOpacity style={styles.addButton} onPress={handleAddPharmacy}>
-            <ThemedText style={styles.addButtonText}>+ Add</ThemedText>
-          </TouchableOpacity>
-        </ThemedView>
-
-        <ScrollView
+        <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
+          <View style={styles.header}>
+            <BackButton />
+            <ThemedText type="title" style={styles.title} lightColor="#333333" darkColor="#333333">
+              My Pharmacies
+            </ThemedText>
+            <TouchableOpacity style={styles.addButton} onPress={handleAddPharmacy}>
+              <ThemedText style={styles.addButtonText}>+ Add</ThemedText>
+            </TouchableOpacity>
+          </View>
           {pharmacies.length === 0 ? (
             <ThemedView style={styles.emptyContainer}>
               <ThemedText style={styles.emptyText}>
@@ -197,7 +204,7 @@ export default function PharmaciesScreen() {
               <ThemedView key={pharmacy.id} style={styles.pharmacyCard}>
                 <ThemedView style={styles.pharmacyHeader}>
                   <ThemedView style={styles.pharmacyInfo}>
-                    <ThemedText type="defaultSemiBold" style={styles.pharmacyName}>
+                    <ThemedText type="defaultSemiBold" style={styles.pharmacyName} lightColor="#333333" darkColor="#333333">
                       {pharmacy.name}
                     </ThemedText>
                     <ThemedText style={styles.pharmacyAddress}>
@@ -245,53 +252,54 @@ export default function PharmaciesScreen() {
           transparent={true}
           onRequestClose={() => setModalVisible(false)}
         >
-          <ThemedView style={styles.modalOverlay}>
-            <ThemedView style={styles.modalContent}>
-              <ThemedView style={styles.modalHeader}>
-                <ThemedText type="title" style={styles.modalTitle}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <ThemedText type="title" style={styles.modalTitle} lightColor="#333333" darkColor="#333333">
                   {editingPharmacy ? 'Edit Pharmacy' : 'Add Pharmacy'}
                 </ThemedText>
                 <TouchableOpacity
                   style={styles.closeButton}
                   onPress={() => setModalVisible(false)}
+                  activeOpacity={0.7}
                 >
-                  <ThemedText style={styles.closeButtonText}>✕</ThemedText>
+                  <ThemedText style={styles.closeButtonText} lightColor="#333333" darkColor="#333333">✕</ThemedText>
                 </TouchableOpacity>
-              </ThemedView>
+              </View>
 
-              <ThemedView style={styles.form}>
-                <ThemedView style={styles.inputGroup}>
-                  <ThemedText style={styles.label}>Pharmacy Name</ThemedText>
+              <View style={styles.form}>
+                <View style={styles.inputGroup}>
+                  <ThemedText style={styles.label} lightColor="#333333" darkColor="#333333">Pharmacy Name</ThemedText>
                   <TextInput
                     style={styles.input}
                     value={formName}
                     onChangeText={setFormName}
                     placeholder="Enter pharmacy name"
-                    placeholderTextColor="#666"
+                    placeholderTextColor="#999999"
                   />
-                </ThemedView>
+                </View>
 
-                <ThemedView style={styles.inputGroup}>
-                  <ThemedText style={styles.label}>Ethereum Address</ThemedText>
+                <View style={styles.inputGroup}>
+                  <ThemedText style={styles.label} lightColor="#333333" darkColor="#333333">Ethereum Address</ThemedText>
                   <TextInput
                     style={styles.input}
                     value={formAddress}
                     onChangeText={setFormAddress}
                     placeholder="0x..."
-                    placeholderTextColor="#666"
+                    placeholderTextColor="#999999"
                     autoCapitalize="none"
                     autoCorrect={false}
                   />
-                </ThemedView>
+                </View>
 
                 <TouchableOpacity style={styles.saveButton} onPress={handleSavePharmacy}>
                   <ThemedText style={styles.saveButtonText}>
                     {editingPharmacy ? 'Update Pharmacy' : 'Add Pharmacy'}
                   </ThemedText>
                 </TouchableOpacity>
-              </ThemedView>
-            </ThemedView>
-          </ThemedView>
+              </View>
+            </View>
+          </View>
         </Modal>
       </ThemedView>
     </SafeAreaView>
@@ -304,67 +312,107 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  addButton: {
-    backgroundColor: '#00ff88',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  addButtonText: {
-    color: '#000',
-    fontSize: 14,
-    fontWeight: 'bold',
+    backgroundColor: '#F5F5F5',
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    gap: 16,
-    paddingBottom: 20,
+    padding: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+    gap: 12,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    flex: 1,
+    color: '#333333',
+  },
+  addButton: {
+    backgroundColor: '#4A90E2',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     padding: 40,
     gap: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   emptyText: {
     fontSize: 16,
     textAlign: 'center',
+    color: '#333333',
   },
   emptySubtext: {
     fontSize: 14,
     opacity: 0.7,
     textAlign: 'center',
+    color: '#666666',
   },
   emptyButton: {
-    backgroundColor: '#00ff88',
+    backgroundColor: '#4A90E2',
     padding: 16,
     borderRadius: 12,
     marginTop: 8,
+    minWidth: 200,
   },
   emptyButtonText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
   pharmacyCard: {
-    backgroundColor: 'rgba(0, 255, 136, 0.1)',
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
     gap: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: 16,
   },
   pharmacyHeader: {
     flexDirection: 'row',
@@ -377,21 +425,23 @@ const styles = StyleSheet.create({
   },
   pharmacyName: {
     fontSize: 18,
+    color: '#333333',
   },
   pharmacyAddress: {
     fontSize: 14,
     opacity: 0.7,
     fontFamily: 'monospace',
+    color: '#666666',
   },
   selectedBadge: {
-    backgroundColor: '#00ff88',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
   selectedText: {
-    color: '#000',
-    fontSize: 10,
+    color: '#FFFFFF',
+    fontSize: 11,
     fontWeight: 'bold',
   },
   pharmacyActions: {
@@ -399,47 +449,48 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   selectButton: {
-    backgroundColor: '#00ff88',
+    backgroundColor: '#4A90E2',
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingVertical: 10,
+    borderRadius: 12,
     flex: 1,
     alignItems: 'center',
   },
   selectButtonText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: 'bold',
   },
   editButton: {
-    backgroundColor: 'rgba(0, 255, 136, 0.3)',
+    backgroundColor: '#50C9C3',
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingVertical: 10,
+    borderRadius: 12,
     flex: 1,
     alignItems: 'center',
   },
   editButtonText: {
-    color: '#00ff88',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: 'bold',
   },
   deleteButton: {
-    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+    backgroundColor: '#F44336',
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingVertical: 10,
+    borderRadius: 12,
     flex: 1,
     alignItems: 'center',
   },
   deleteButtonText: {
-    color: '#ff4444',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: 'bold',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
+    color: '#333333',
   },
   modalOverlay: {
     flex: 1,
@@ -449,61 +500,80 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
+    padding: 24,
     width: '100%',
     maxWidth: 400,
-    borderWidth: 1,
-    borderColor: '#333',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+    backgroundColor: 'transparent',
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#333333',
   },
   closeButton: {
-    padding: 4,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   closeButtonText: {
-    fontSize: 24,
-    color: '#fff',
-    opacity: 0.7,
+    fontSize: 20,
+    color: '#333333',
+    fontWeight: '600',
+    lineHeight: 20,
   },
   form: {
     gap: 16,
+    backgroundColor: 'transparent',
   },
   inputGroup: {
     gap: 8,
+    backgroundColor: 'transparent',
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#333333',
     opacity: 0.9,
   },
   input: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#F5F5F5',
     borderWidth: 1,
-    borderColor: '#333',
-    borderRadius: 8,
+    borderColor: '#E0E0E0',
+    borderRadius: 12,
     padding: 12,
-    color: '#fff',
+    color: '#333333',
     fontSize: 16,
   },
   saveButton: {
-    backgroundColor: '#00ff88',
+    backgroundColor: '#4A90E2',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 8,
   },
   saveButtonText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },

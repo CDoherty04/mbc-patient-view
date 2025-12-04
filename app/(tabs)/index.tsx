@@ -1,10 +1,11 @@
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/themed-text';
+import { ActionCard } from '@/components/action-card';
+import { SummaryCard } from '@/components/summary-card';
 import { ThemedView } from '@/components/themed-view';
+import { WelcomeBanner } from '@/components/welcome-banner';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -33,49 +34,54 @@ export default function HomeScreen() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          {/* Main Action Section */}
-          <ThemedView style={styles.actionSection}>
-            <TouchableOpacity style={styles.actionButton} onPress={handlePay}>
-              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
-                Pay
-              </ThemedText>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleViewPrescriptions}>
-              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
-                View Prescriptions
-              </ThemedText>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleSelectPharmacy}>
-              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
-                Select Pharmacy
-              </ThemedText>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleMintPassport}>
-              <ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
-                Mint Medical Passport
-              </ThemedText>
-            </TouchableOpacity>
-          </ThemedView>
+          {/* Welcome Banner */}
+          <WelcomeBanner />
 
-          {/* Patient Info Section */}
-          <ThemedView style={styles.patientSection}>
-            <Image
-              source={require('@/assets/images/Patient.png')}
-              style={styles.patientImage}
-              contentFit="cover"
+          {/* Action Cards Section */}
+          <View style={styles.actionSection}>
+            <ActionCard
+              icon="credit-card"
+              iconColor="#FFFFFF"
+              iconBackgroundColor="#87CEEB"
+              title="Pay Bills"
+              subtitle="Quickly pay your pharmacy bills"
+              onPress={handlePay}
             />
-            <ThemedView style={styles.patientInfo} lightColor="transparent" darkColor="transparent">
-              <ThemedText type="defaultSemiBold" style={styles.patientName}>
-                Charlie Doherty
-              </ThemedText>
-              <ThemedText type="default" style={styles.patientRole}>
-                CompanyRX Patient
-              </ThemedText>
-            </ThemedView>
-          </ThemedView>
+            
+            <ActionCard
+              icon="assignment"
+              iconColor="#FFFFFF"
+              iconBackgroundColor="#4CAF50"
+              title="View Prescriptions"
+              subtitle="Access all your prescriptions"
+              onPress={handleViewPrescriptions}
+            />
+            
+            <ActionCard
+              icon="place"
+              iconColor="#FFFFFF"
+              iconBackgroundColor="#00BCD4"
+              title="Select Pharmacy"
+              subtitle="Find nearby pharmacies"
+              onPress={handleSelectPharmacy}
+            />
+            
+            <ActionCard
+              icon="security"
+              iconColor="#FFFFFF"
+              iconBackgroundColor="#4CAF50"
+              title="Digital Medical Passport"
+              subtitle="Mint your secure health ID"
+              onPress={handleMintPassport}
+            />
+          </View>
+
+          {/* Summary Metrics Section */}
+          <View style={styles.summarySection}>
+            <SummaryCard value="5" label="Active RX" />
+            <SummaryCard value="$0" label="Balance" />
+            <SummaryCard value="3" label="Pharmacies" />
+          </View>
         </ScrollView>
       </ThemedView>
     </SafeAreaView>
@@ -88,6 +94,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   scrollView: {
     flex: 1,
@@ -95,45 +102,14 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingTop: 20,
-    gap: 32,
     paddingBottom: 40,
   },
   actionSection: {
     gap: 16,
+    marginBottom: 24,
   },
-  actionButton: {
-    backgroundColor: '#00ff88',
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 56,
-  },
-  actionButtonText: {
-    color: '#000',
-    fontSize: 16,
-  },
-  patientSection: {
+  summarySection: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    padding: 0,
-  },
-  patientImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-  },
-  patientInfo: {
-    flex: 1,
-    gap: 4,
-  },
-  patientName: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  patientRole: {
-    fontSize: 14,
-    opacity: 0.7,
+    gap: 12,
   },
 });

@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { BackButton } from '@/components/back-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { getWalletAddress, initializeBlockchain } from '@/lib/passports';
 import {
+  PaymentRequest,
+  executeUSDCTransfer,
+  getEnvVar,
   getPaymentRequests,
   updatePaymentRequestStatus,
-  executeUSDCTransfer,
-  usdcToBigInt,
-  PaymentRequest,
-  getEnvVar,
-  storePaymentRequest,
+  usdcToBigInt
 } from '@/lib/payments';
-import { getWalletAddress, initializeBlockchain } from '@/lib/passports';
 
 export default function PaymentRequestsScreen() {
   const router = useRouter();
@@ -126,13 +126,13 @@ export default function PaymentRequestsScreen() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return '#00ff88';
+        return '#4CAF50';
       case 'failed':
-        return '#ff4444';
+        return '#F44336';
       case 'pending':
-        return '#ffaa00';
+        return '#FF9800';
       default:
-        return '#888';
+        return '#9E9E9E';
     }
   };
 
@@ -144,8 +144,13 @@ export default function PaymentRequestsScreen() {
     return (
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.container}>
-          <ActivityIndicator size="large" color="#00ff88" />
-          <ThemedText style={styles.loadingText}>Loading payment requests...</ThemedText>
+          <View style={styles.header}>
+            <BackButton />
+          </View>
+          <View style={styles.centerContent}>
+            <ActivityIndicator size="large" color="#4A90E2" />
+            <ThemedText style={styles.loadingText}>Loading payment requests...</ThemedText>
+          </View>
         </ThemedView>
       </SafeAreaView>
     );
@@ -155,15 +160,20 @@ export default function PaymentRequestsScreen() {
     return (
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.container}>
-          <ThemedText style={styles.errorText}>
-            Wallet not initialized. Please mint a medical passport first.
-          </ThemedText>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push('/(tabs)/mint-passport')}
-          >
-            <ThemedText style={styles.buttonText}>Go to Mint Passport</ThemedText>
-          </TouchableOpacity>
+          <View style={styles.header}>
+            <BackButton />
+          </View>
+          <View style={styles.centerContent}>
+            <ThemedText style={styles.errorText}>
+              Wallet not initialized. Please mint a medical passport first.
+            </ThemedText>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => router.push('/(tabs)/mint-passport')}
+            >
+              <ThemedText style={styles.buttonText}>Go to Mint Passport</ThemedText>
+            </TouchableOpacity>
+          </View>
         </ThemedView>
       </SafeAreaView>
     );
@@ -172,20 +182,21 @@ export default function PaymentRequestsScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ThemedView style={styles.container}>
-        <ThemedView style={styles.header}>
-          <ThemedText type="title" style={styles.title}>
-            Payment Requests
-          </ThemedText>
-          <TouchableOpacity onPress={loadPaymentRequests} style={styles.refreshButton}>
-            <ThemedText style={styles.refreshText}>Refresh</ThemedText>
-          </TouchableOpacity>
-        </ThemedView>
-
-        <ScrollView
+        <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
+          <View style={styles.header}>
+            <BackButton />
+            <ThemedText type="title" style={styles.title} lightColor="#333333" darkColor="#333333">
+              Payment Requests
+            </ThemedText>
+            <TouchableOpacity onPress={loadPaymentRequests} style={styles.refreshButton}>
+              <ThemedText style={styles.refreshText}>Refresh</ThemedText>
+            </TouchableOpacity>
+          </View>
+
           {paymentRequests.length === 0 ? (
             <ThemedView style={styles.emptyContainer}>
               <ThemedText style={styles.emptyText}>
@@ -199,7 +210,7 @@ export default function PaymentRequestsScreen() {
             paymentRequests.map((request) => (
               <ThemedView key={request.id} style={styles.requestCard}>
                 <ThemedView style={styles.requestHeader}>
-                  <ThemedText type="defaultSemiBold" style={styles.requestTitle}>
+                  <ThemedText type="defaultSemiBold" style={styles.requestTitle} lightColor="#333333" darkColor="#333333">
                     Payment Request #{request.tokenId}
                   </ThemedText>
                   <ThemedView
@@ -217,7 +228,7 @@ export default function PaymentRequestsScreen() {
                 <ThemedView style={styles.requestDetails}>
                   <ThemedView style={styles.detailRow}>
                     <ThemedText style={styles.detailLabel}>Amount:</ThemedText>
-                    <ThemedText type="defaultSemiBold" style={styles.detailValue}>
+                    <ThemedText type="defaultSemiBold" style={styles.detailValue} lightColor="#333333" darkColor="#333333">
                       {request.amount} USDC
                     </ThemedText>
                   </ThemedView>
@@ -280,52 +291,94 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  refreshButton: {
-    padding: 8,
-  },
-  refreshText: {
-    color: '#00ff88',
-    fontSize: 14,
+    backgroundColor: '#F5F5F5',
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    gap: 16,
-    paddingBottom: 20,
+    padding: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+    gap: 12,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    flex: 1,
+    color: '#333333',
+  },
+  refreshButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  refreshText: {
+    color: '#4A90E2',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     padding: 40,
     gap: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   emptyText: {
     fontSize: 16,
     textAlign: 'center',
+    color: '#333333',
   },
   emptySubtext: {
     fontSize: 14,
     opacity: 0.7,
     textAlign: 'center',
+    color: '#666666',
   },
   requestCard: {
-    backgroundColor: 'rgba(0, 255, 136, 0.1)',
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
     gap: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: 16,
   },
   requestHeader: {
     flexDirection: 'row',
@@ -334,15 +387,16 @@ const styles = StyleSheet.create({
   },
   requestTitle: {
     fontSize: 18,
+    color: '#333333',
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
   statusText: {
-    color: '#000',
-    fontSize: 10,
+    color: '#FFFFFF',
+    fontSize: 11,
     fontWeight: 'bold',
   },
   requestDetails: {
@@ -354,13 +408,16 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 14,
-    opacity: 0.7,
+    color: '#666666',
+    opacity: 0.8,
   },
   detailValue: {
     fontSize: 14,
+    color: '#333333',
+    fontWeight: '500',
   },
   payButton: {
-    backgroundColor: '#00ff88',
+    backgroundColor: '#4A90E2',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -371,51 +428,54 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   payButtonText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
   completedBadge: {
-    backgroundColor: '#00ff88',
+    backgroundColor: '#4CAF50',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     marginTop: 8,
   },
   completedText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: 'bold',
   },
   failedBadge: {
-    backgroundColor: '#ff4444',
+    backgroundColor: '#F44336',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     marginTop: 8,
   },
   failedText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: 'bold',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
+    color: '#333333',
   },
   errorText: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 20,
+    color: '#333333',
   },
   button: {
-    backgroundColor: '#00ff88',
+    backgroundColor: '#4A90E2',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    minWidth: 200,
   },
   buttonText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },

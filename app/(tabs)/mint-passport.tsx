@@ -1,6 +1,6 @@
+import { BackButton } from '@/components/back-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useThemeColor } from '@/hooks/use-theme-color';
 import {
   getHealthStatus,
   initializeBlockchain,
@@ -11,11 +11,11 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -38,10 +38,6 @@ export default function MintPassportScreen() {
   const [isInitializing, setIsInitializing] = useState(false);
   const [isBlockchainReady, setIsBlockchainReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const borderColor = useThemeColor({ light: '#e0e0e0', dark: '#333' }, 'icon');
 
   useEffect(() => {
     // Automatically initialize blockchain on component load
@@ -147,12 +143,9 @@ export default function MintPassportScreen() {
   const inputStyle = [
     styles.input,
     {
-      backgroundColor: Platform.select({
-        ios: backgroundColor,
-        default: backgroundColor,
-      }),
-      borderColor,
-      color: textColor,
+      borderColor: '#E0E0E0',
+      color: '#333333',
+      backgroundColor: '#F5F5F5',
     },
   ];
 
@@ -165,23 +158,28 @@ export default function MintPassportScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <ThemedText type="title" style={styles.title}>
-            Mint Medical Passport
-          </ThemedText>
-          <ThemedText type="subtitle" style={styles.subtitle}>
-            Enter your medical information to create a blockchain-based medical passport
-          </ThemedText>
+          <View style={styles.header}>
+            <BackButton />
+            <View style={styles.titleContainer}>
+              <ThemedText type="title" style={styles.title} lightColor="#333333" darkColor="#333333">
+                Mint Medical Passport
+              </ThemedText>
+              <ThemedText type="subtitle" style={styles.subtitle} lightColor="#666666" darkColor="#666666">
+                Enter your medical information to create a blockchain-based medical passport
+              </ThemedText>
+            </View>
+          </View>
 
           {/* Error Display */}
           {error && (
-            <ThemedView style={styles.errorContainer}>
+            <View style={styles.errorContainer}>
               <ThemedText style={styles.errorText}>{error}</ThemedText>
-            </ThemedView>
+            </View>
           )}
 
           {/* Form Fields */}
-          <ThemedView style={styles.formSection}>
-            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>
+          <View style={styles.formSection}>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle} lightColor="#333333" darkColor="#333333">
               Personal Information
             </ThemedText>
 
@@ -189,7 +187,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={inputStyle}
               placeholder="Enter your full name"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.name}
               onChangeText={(value) => handleInputChange('name', value)}
             />
@@ -198,7 +196,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={inputStyle}
               placeholder="Email or phone number"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.contactInfo}
               onChangeText={(value) => handleInputChange('contactInfo', value)}
               keyboardType="email-address"
@@ -208,7 +206,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={inputStyle}
               placeholder="YYYY-MM-DD"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.dateOfBirth}
               onChangeText={(value) => handleInputChange('dateOfBirth', value)}
             />
@@ -217,13 +215,13 @@ export default function MintPassportScreen() {
             <TextInput
               style={inputStyle}
               placeholder="SSN (optional)"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.socialSecurityNumber}
               onChangeText={(value) => handleInputChange('socialSecurityNumber', value)}
               secureTextEntry
             />
 
-            <ThemedText type="defaultSemiBold" style={[styles.sectionTitle, styles.sectionSpacing]}>
+            <ThemedText type="defaultSemiBold" style={[styles.sectionTitle, styles.sectionSpacing]} lightColor="#333333" darkColor="#333333">
               Medical History
             </ThemedText>
 
@@ -231,7 +229,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={[inputStyle, styles.textArea]}
               placeholder="Enter your medical history"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.medicalHistory}
               onChangeText={(value) => handleInputChange('medicalHistory', value)}
               multiline
@@ -243,7 +241,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={[inputStyle, styles.textArea]}
               placeholder="List past diagnoses"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.pastDiagnoses}
               onChangeText={(value) => handleInputChange('pastDiagnoses', value)}
               multiline
@@ -255,7 +253,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={[inputStyle, styles.textArea]}
               placeholder="Family medical history"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.familyHistory}
               onChangeText={(value) => handleInputChange('familyHistory', value)}
               multiline
@@ -263,7 +261,7 @@ export default function MintPassportScreen() {
               textAlignVertical="top"
             />
 
-            <ThemedText type="defaultSemiBold" style={[styles.sectionTitle, styles.sectionSpacing]}>
+            <ThemedText type="defaultSemiBold" style={[styles.sectionTitle, styles.sectionSpacing]} lightColor="#333333" darkColor="#333333">
               Current Health Information
             </ThemedText>
 
@@ -271,7 +269,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={[inputStyle, styles.textArea]}
               placeholder="List any allergies"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.allergies}
               onChangeText={(value) => handleInputChange('allergies', value)}
               multiline
@@ -283,7 +281,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={[inputStyle, styles.textArea]}
               placeholder="List current medications"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.currentMedications}
               onChangeText={(value) => handleInputChange('currentMedications', value)}
               multiline
@@ -295,7 +293,7 @@ export default function MintPassportScreen() {
             <TextInput
               style={[inputStyle, styles.textArea]}
               placeholder="Current treatment plans"
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.treatmentRegimens}
               onChangeText={(value) => handleInputChange('treatmentRegimens', value)}
               multiline
@@ -307,14 +305,14 @@ export default function MintPassportScreen() {
             <TextInput
               style={[inputStyle, styles.textArea]}
               placeholder="Blood pressure, heart rate, etc."
-              placeholderTextColor={borderColor}
+              placeholderTextColor="#999999"
               value={formData.vitalSigns}
               onChangeText={(value) => handleInputChange('vitalSigns', value)}
               multiline
               numberOfLines={2}
               textAlignVertical="top"
             />
-          </ThemedView>
+          </View>
 
           {/* Mint Button */}
           <TouchableOpacity
@@ -345,6 +343,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   scrollView: {
     flex: 1,
@@ -354,12 +353,19 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 40,
   },
+  header: {
+    marginBottom: 24,
+    gap: 16,
+  },
+  titleContainer: {
+    gap: 8,
+  },
   title: {
-    marginBottom: 8,
+    color: '#333333',
   },
   subtitle: {
-    marginBottom: 24,
     opacity: 0.7,
+    color: '#666666',
   },
   statusSection: {
     padding: 16,
@@ -395,25 +401,38 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   errorContainer: {
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#FFEBEE',
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#ff0000',
+    borderColor: '#F44336',
   },
   errorText: {
-    color: '#ff0000',
+    color: '#F44336',
     fontSize: 14,
   },
   formSection: {
-    gap: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    gap: 16,
     marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
     marginTop: 8,
-    marginBottom: 4,
+    marginBottom: 8,
+    color: '#333333',
+    fontWeight: '600',
   },
   sectionSpacing: {
     marginTop: 24,
@@ -421,35 +440,47 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginTop: 8,
-    marginBottom: 4,
+    marginBottom: 6,
     opacity: 0.8,
+    color: '#333333',
+    fontWeight: '500',
   },
   input: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 12,
     fontSize: 16,
     minHeight: 44,
+    backgroundColor: '#F5F5F5',
+    borderColor: '#E0E0E0',
   },
   textArea: {
     minHeight: 100,
     paddingTop: 12,
   },
   mintButton: {
-    backgroundColor: '#00ff88',
+    backgroundColor: '#4A90E2',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 56,
     marginTop: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   mintButtonDisabled: {
-    backgroundColor: '#666',
+    backgroundColor: '#9E9E9E',
     opacity: 0.6,
   },
   mintButtonText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
